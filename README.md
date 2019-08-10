@@ -1,2 +1,2 @@
 # crud-vuejs-php-axios
-CRUD using VueJS, PHP, axios, and Bulma for CSS
+Simple CRUD using VueJS, PHP using PDO and MySQL, axios, and Bulma for CSS
