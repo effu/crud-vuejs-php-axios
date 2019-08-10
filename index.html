@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PHP | MySQL | Vue.js | Axios Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        [v-cloak] { display: none; }
+        .table td.edit { cursor: pointer; }
+        .table td.edit:hover { text-decoration: underline; }
+
+    </style>
+</head>
+
+<body>
+<section class="section">
+<div class="container-fluid">
+
+
+    <div v-cloak id="vue_contacts">
+			<div class="modal" :class="{ 'is-active': isModalOpen }">
+				  <div class="modal-background" @click="closeModal()"></div>
+				  <div class="modal-card">
+						<header class="modal-card-head">
+                            <p class="modal-card-title">{{ modalTitle }}</p>
+                            <button class="delete" aria-label="close" @click="closeModal()"></button>
+                        </header>
+                        <section class="modal-card-body">
+                        <form v-on:submit.prevent>
+				            <div class="field">
+				                <label class="label">Name</label>
+				                <input class="input" type="text" name="name" v-model="formData.name" required>
+				            </div>
+				            <div class="field">
+				                <label class="label">Email</label>
+				                <input class="input" type="email" name="email" v-model="formData.email" required>
+				            </div>
+				            <div class="field">
+				                <label class="label">City</label>
+				                <input class="input" type="text" name="city" v-model="formData.city">
+				            </div>
+				            <div class="field">
+				                <label class="label">State</label>
+				                <input class="input" type="text" name="state" v-model="formData.state">
+				            </div>
+				            <div class="field">
+				                <label class="label">Zip</label>
+				                <input class="input" type="text" name="zip" v-model="formData.zip">
+				            </div>
+				            <div class="field">
+				                <label class="label">Phone</label>
+				                <input class="input" type="text" name="phone" v-model="formData.phone">
+				            </div>
+								</section>
+	            <footer class="modal-card-foot" style="justify-content: flex-end;">
+		                <button v-if="!isEditing" class="button is-primary" @click="createContact()">Add</button>
+		                <button v-if="isEditing" class="button is-primary" @click="changeContact()">Change</button>
+	            </footer>
+		        </form>
+
+				  </div>
+				  <button class="modal-close is-large" aria-label="close" @click="closeModal()"></button>
+				</div>
+	<my-app title="Contact Management">
+		   <div>
+		    <md-button class="md-primary pull-right" @click="openModal()">Create Contact</md-button>
+        <table class="table is-striped is-hoverable">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th>Phone</th>
+                <th></th>
+            </tr>
+            <tr v-for="(contact, index) in contacts" :key="contact.id">
+                <td class="edit" @click="editContact(contact, index)">{{ contact.name }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.email }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.city }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.state }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.zip }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.phone }}</td>
+                <td class="edit">
+                     <span class="delete is-small" @click="deleteContact(contact, index)"></span>
+                </td>
+            </tr>
+        </table>
+        </br>
+        <md-button class="md-primary" @click="openCreateModal()">Create Contact</md-button>
+       </div>
+	</my-app>
+
+    </div>
+
+  </div>
+</section>
+    <script src="https://unpkg.com/vue-material@beta"></script>
+    <script src="./js/App.js"></script>
+    <script>
+
+
+    Vue.use(VueMaterial.default)
+
+    var app = new Vue({
+        el: '#vue_contacts',
+        data: {
+            formData: {
+            	name: '',
+	            email: '',
+	            city: '',
+	            state: '',
+	            zip: '',
+	            phone: '',
+	            id: 0,
+	            index: '',
+	          },
+            contacts: [],
+            isEditing: false,
+            isModalOpen: false,
+            modalTitle: 'Create Contact'
+        },
+        mounted: function() {
+            console.log('Vue is all set!')
+            this.getContacts()
+        },
+        methods: {
+            getContacts: function() {
+                axios.get('api/contacts.php')
+                    .then(function(response) {
+                        console.log(response.data);
+                        app.contacts = response.data;
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            },
+            openModal: function() {
+            	this.isModalOpen = true;
+            },
+            openCreateModal: function() {
+                this.resetForm();
+                this.openModal();
+
+            },
+            closeModal: function() {
+            	this.isModalOpen = false;
+            },
+            createContact: function() {
+                console.log("Create contact!")
+                console.log(this.formData);
+                this.openModal();
+                let formData = new FormData();
+                console.log("name:", this.formData.name, "email:", this.formData.email)
+                formData.append('name', this.formData.name || '')
+                formData.append('email', this.formData.email || '')
+                formData.append('state', this.formData.state || '')
+                formData.append('city', this.formData.city || '')
+                formData.append('zip', this.formData.zip || '')
+                formData.append('phone', this.formData.phone || '')
+                var contact = {};
+                formData.forEach(function(value, key) {
+                    contact[key] = value;
+                });
+                axios({
+                        method: 'post',
+                        url: 'api/contacts.php',
+                        data: formData,
+                        config: { headers: { 'Content-Type': 'multipart/form-data' } }
+                    })
+                    .then(function(response) {
+                        //handle success
+                        console.log(response)
+                        app.contacts.push(contact)
+                        app.resetForm();
+                    })
+                    .catch(function(response) {
+                        //handle error
+                        console.log(response)
+                    });
+            },
+            editContact: function(contact, index) {
+	            	this.formData = contact;
+	            	this.isEditing = true;
+                    this.modalTitle = 'Edit Contact';
+	            	this.openModal();
+            },
+            deleteContact: function(contact, index) {
+	            	if (confirm("Are you sure you want to delete, " + contact.name + "?")){
+	            		console.log("Deleting: " + contact.id + " Index: " + index);
+	                  let formData = new FormData();
+	                  formData.append('id', contact.id)
+	                  formData.append('action', 'delete')
+	                  axios({
+                        method: 'post',
+                        url: 'api/contacts.php',
+                        data: formData,
+                        config: { headers: { 'Content-Type': 'multipart/form-data' } }
+                    })
+                    .then(function(response) {
+                        console.log(response)
+				            		Vue.delete(app.contacts, index)
+                        app.resetForm();
+                    })
+                    .catch(function(response) {
+                        //handle error
+                        console.log(response)
+                    });
+	            	}
+            },
+            changeContact: function() {
+                console.log("Change contact!")
+
+                let formData = new FormData();
+                console.log("name:", this.formData.name, "id:", this.formData.id, " key:", this.formData.index)
+                formData.append('id', this.formData.id)
+                formData.append('name', this.formData.name)
+                formData.append('email', this.formData.email)
+                formData.append('state', this.formData.state)
+                formData.append('city', this.formData.city)
+                formData.append('zip', this.formData.zip)
+                formData.append('phone', this.formData.phone)
+
+                var contact = {};
+                formData.forEach(function(value, key) {
+                    contact[key] = value;
+                });
+
+                axios({
+                        method: 'post',
+                        url: 'api/contacts.php',
+                        data: formData,
+                        config: { headers: { 'Content-Type': 'multipart/form-data' } }
+                    })
+                    .then(function(response) {
+                        //handle success
+                        console.log(response)
+                        // /* find the index of object from array that needs to be updated */
+                        // const objIndex = app.contacts.findIndex(obj => obj.id === contact.id)
+                        // /* make a new object with the updated object */
+                        // const updatedObj = {...app.contacts[objIndex], contact}
+                        // const updatedContacts = [
+                        // 	...app.contacts.slice(0,objIndex),
+                        // 	updatedObj,
+                        // 	...app.contacts.slice(objIndex+1),
+                        // ]
+                        Vue.set(app.contacts, app.index, contact)
+                        app.resetForm();
+                    })
+                    .catch(function(response) {
+                        //handle error
+                        console.log(response)
+                    });
+            },
+            resetForm: function() {
+                this.formData = {};
+                this.isEditing = false;
+                this.closeModal();
+
+            }
+        }
+    })
+    </script>
+
+</body>
+
+</html>

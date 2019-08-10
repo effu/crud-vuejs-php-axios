@@ -1,0 +1,3 @@
+        [v-cloak] { display: none; }
+        .table td.edit { cursor: pointer; }
+        .table td.edit:hover { text-decoration: underline; }
