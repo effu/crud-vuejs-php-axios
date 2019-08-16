@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PHP | MySQL | Vue.js | Axios Example</title>
+    <title>Contacts CRUD with Vue.js, Axios, PHP, MySQL, and Bulma</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
@@ -23,7 +23,7 @@
   <div class="hero-body">
     <div class="container">
       <p class="title">
-        CRUD with Vue.js Axios PHP and Bulma
+        Contacts CRUD with Vue.js, Axios, PHP, MySQL, and Bulma
       </p>
       <p class="subtitle">
         by <a href="http://webcarpehtner.com">Joseph Cowdell</a>
@@ -32,62 +32,81 @@
   </div>
 </section>
 <section class="section">
-<div class="container">	
+<div class="container"> 
     <div v-cloak id="vue_contacts">
-			<div class="modal" :class="{ 'is-active': isModalOpen }">
-				  <div class="modal-background" @click="closeModal()"></div>
-				  <div class="modal-card">
-						<header class="modal-card-head">
+            <div class="modal" :class="{ 'is-active': isModalOpen }">
+                  <div class="modal-background" @click="closeModal()"></div>
+                  <div class="modal-card">
+                        <header class="modal-card-head">
                             <p class="modal-card-title">{{ modalTitle }}</p>
                             <button class="delete" aria-label="close" @click="closeModal()"></button>
                         </header>
                         <section class="modal-card-body">
                         <form v-on:submit.prevent>
-				            <div class="field">
-				                <label class="label">Name</label>
-				                <input class="input" type="text" name="name" v-model="formData.name" required>
-				            </div>
-				            <div class="field">
-				                <label class="label">Email</label>
-				                <input class="input" type="email" name="email" v-model="formData.email" required>
-				            </div>
-				            <div class="field">
-				                <label class="label">City</label>
-				                <input class="input" type="text" name="city" v-model="formData.city">
-				            </div>
-				            <div class="field">
-				                <label class="label">State</label>
-				                <input class="input" type="text" name="state" v-model="formData.state">
-				            </div>
-				            <div class="field">
-				                <label class="label">Zip</label>
-				                <input class="input" type="text" name="zip" v-model="formData.zip">
-				            </div>
-				            <div class="field">
-				                <label class="label">Phone</label>
-				                <input class="input" type="text" name="phone" v-model="formData.phone">
-				            </div>
-								</section>
-	            <footer class="modal-card-foot" style="justify-content: flex-end;">
-		                <button v-if="!isEditing" class="button is-primary" @click="createContact()">Add</button>
-		                <button v-if="isEditing" class="button is-primary" @click="changeContact()">Change</button>
-	            </footer>
-		        </form>
+                            <div class="field">
+                                <label class="label">Name</label>
+                                <input class="input" type="text" name="name" v-model="formData.name" required>
+                            </div>
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <input class="input" type="email" name="email" v-model="formData.email" required>
+                            </div>
+                            <div class="field">
+                                <label class="label">City</label>
+                                <input class="input" type="text" name="city" v-model="formData.city">
+                            </div>
+                            <div class="field">
+                                <label class="label">State</label>
+                                <input class="input" type="text" name="state" v-model="formData.state">
+                            </div>
+                            <div class="field">
+                                <label class="label">Zip</label>
+                                <input class="input" type="text" name="zip" v-model="formData.zip">
+                            </div>
+                            <div class="field">
+                                <label class="label">Phone</label>
+                                <input class="input" type="text" name="phone" v-model="formData.phone">
+                            </div>
+                                </section>
+                <footer class="modal-card-foot" style="justify-content: flex-end;">
+                        <button v-if="!isEditing" class="button is-primary" @click="createContact()">Add</button>
+                        <button v-if="isEditing" class="button is-primary" @click="changeContact()">Change</button>
+                </footer>
+                </form>
 
-				  </div>
-				  <button class="modal-close is-large" aria-label="close" @click="closeModal()"></button>
-				</div>
+                  </div>
+                  <button class="modal-close is-large" aria-label="close" @click="closeModal()"></button>
+                </div>
 
 
-	   <div>
-	   	<div class="field">
-			<label>Search</label>
-	   		<input class="input" type="text" v-model="search" placeholder="Enter your search"/>
-	   	</div>
-		<div class="field">
-		  <button class="button is-white" @click="openCreateModal()">Create Contact</button>
-		  <button class="button is-text is-pulled-right" @click="toggleDisabled()">{{ labelDisabled }}</button>
-		</div>
+       <div>
+        <h1 class="title">Contacts</h1>
+        <div class="columns">
+            <div class="column">
+                <div class="field">
+                    <label>Search</label>
+                    <input class="input" type="text" v-model="search" placeholder="Enter your search"/>
+                </div>
+            </div>
+            <div class="column">
+                <div class="field">
+                  <br />
+                  <button class="button is-primary is-pulled-right" @click="openCreateModal()">Create Contact</button>
+<!--  // Alternate method of toggling
+<button class="button is-text is-pulled-right" @click="toggleDisabled()">{{ labelDisabled }}</button>
+ -->                
+                </div>
+            </div>
+
+        </div>
+
+            <div class="tabs">
+              <ul>
+                <li :class="{ 'is-active': !showDisabled }" @click="toggleDisabled()"><a>Active</a></li>
+                <li :class="{ 'is-active': showDisabled }" @click="toggleDisabled()"><a>Disabled</a></li>
+              </ul>
+            </div>
+
         <table class="table is-striped is-hoverable">
             <tr>
                 <th>Name</th>
@@ -125,18 +144,18 @@
         el: '#vue_contacts',
         data: {
             formData: {
-            	name: '',
-	            email: '',
-	            city: '',
-	            state: '',
-	            zip: '',
-	            phone: '',
-	            id: 0,
-	            index: '',
-	          },
-	        search: '',
-	        showDisabled: 0,
-	        labelDisabled: 'Show Disabled',
+                name: '',
+                email: '',
+                city: '',
+                state: '',
+                zip: '',
+                phone: '',
+                id: 0,
+                index: '',
+              },
+            search: '',
+            showDisabled: 0,
+            labelDisabled: 'Show Disabled',
             contacts: [],
             isEditing: false,
             isModalOpen: false,
@@ -144,26 +163,34 @@
         },
         mounted: function() {
             console.log('Vue loading. Getting contacts.')
+            let self = this;
+            window.addEventListener('keyup', function(event) {
+            // If  ESC key was pressed...
+                if (event.keyCode === 27) {
+                    // try close your dialog
+                    self.isModalOpen = false;
+                }
+            });
             this.getContacts()
         },
         computed: {
-		  filteredContacts() {
-		    return this.contacts.filter(contact => {
-		      return contact.disabled === this.showDisabled &&
-		      (this.toLower(contact.name).includes(this.search.toLowerCase()) || 
-		      this.toLower(contact.email).includes(this.search.toLowerCase()) ||
-		      this.toLower(contact.city).includes(this.search.toLowerCase()) ||
-		      this.toLower(contact.state).includes(this.search.toLowerCase()) ||
-		      this.toLower(contact.zip).includes(this.search.toLowerCase()) || 
-		      this.toLower(contact.phone).includes(this.search.toLowerCase()))
-		    })
-		  }
-		},
+          filteredContacts() {
+            return this.contacts.filter(contact => {
+              return contact.disabled === this.showDisabled &&
+              (this.toLower(contact.name).includes(this.search.toLowerCase()) || 
+              this.toLower(contact.email).includes(this.search.toLowerCase()) ||
+              this.toLower(contact.city).includes(this.search.toLowerCase()) ||
+              this.toLower(contact.state).includes(this.search.toLowerCase()) ||
+              this.toLower(contact.zip).includes(this.search.toLowerCase()) || 
+              this.toLower(contact.phone).includes(this.search.toLowerCase()))
+            })
+          }
+        },
         methods: {
-        	toLower: function(value) {
-        		const res = value === null ? '' : value.toLowerCase();
-        		return res;
-        	},
+            toLower: function(value) {
+                const res = value === null ? '' : value.toLowerCase();
+                return res;
+            },
             getContacts: function() {
                 axios.get('api/contacts.php')
                     .then(function(response) {
@@ -175,11 +202,12 @@
                     });
             },
             openModal: function() {
-            	this.isModalOpen = true;
+                this.isModalOpen = true;
             },
             toggleDisabled: function() {
-            	this.labelDisabled = (this.showDisabled === 1) ? 'Hide Disabled' : 'Show Disabled';
-            	this.showDisabled = (this.showDisabled === 1) ? 0 : 1;
+                this.showDisabled = (this.showDisabled === 1) ? 0 : 1;
+                this.labelDisabled = (this.showDisabled === 1) ? 'Show Active' : 'Show Disabled';
+
             },
             openCreateModal: function() {
                 this.resetForm();
@@ -187,7 +215,7 @@
 
             },
             closeModal: function() {
-            	this.isModalOpen = false;
+                this.isModalOpen = false;
             },
             createContact: function() {
                 console.log("Create contact!")
@@ -201,6 +229,7 @@
                 formData.append('city', this.formData.city || '')
                 formData.append('zip', this.formData.zip || '')
                 formData.append('phone', this.formData.phone || '')
+                formData.append('disabled', 0)
                 var contact = {};
                 formData.forEach(function(value, key) {
                     contact[key] = value;
@@ -214,27 +243,30 @@
                     .then(function(response) {
                         //handle success
                         console.log(response)
-                        app.contacts.push(contact)
-                        app.resetForm();
+                        app.filteredContacts.push(contact)
+                        app.resetForm()
+                        
                     })
                     .catch(function(response) {
                         //handle error
                         console.log(response)
-                    });
+                    })
+                    // this.getContacts()
+                    // this.$forceUpdate()
             },
             editContact: function(contact, index) {
-	            	this.formData = contact;
-	            	this.isEditing = true;
+                    this.formData = contact;
+                    this.isEditing = true;
                     this.modalTitle = 'Edit Contact';
-	            	this.openModal();
+                    this.openModal();
             },
             deleteContact: function(contact, index) {
-	            	if (confirm("Are you sure you want to delete, " + contact.name + "?")){
-	            		console.log("Deleting: " + contact.id + " Index: " + index);
-	                  let formData = new FormData();
-	                  formData.append('id', contact.id)
-	                  formData.append('action', 'delete')
-	                  axios({
+                    if (confirm("Are you sure you want to delete, " + contact.name + "?")){
+                        console.log("Deleting: " + contact.id + " Index: " + index);
+                      let formData = new FormData();
+                      formData.append('id', contact.id)
+                      formData.append('action', 'delete')
+                      axios({
                         method: 'post',
                         url: 'api/contacts.php',
                         data: formData,
@@ -242,14 +274,14 @@
                     })
                     .then(function(response) {
                         console.log(response)
-				            		Vue.delete(app.contacts, index)
+                        Vue.delete(app.filteredContacts, index)
                         app.resetForm();
                     })
                     .catch(function(response) {
                         //handle error
                         console.log(response)
                     });
-	            	}
+                    }
             },
             changeContact: function() {
                 console.log("Change contact!")
@@ -278,16 +310,7 @@
                     .then(function(response) {
                         //handle success
                         console.log(response)
-                        // /* find the index of object from array that needs to be updated */
-                        // const objIndex = app.contacts.findIndex(obj => obj.id === contact.id)
-                        // /* make a new object with the updated object */
-                        // const updatedObj = {...app.contacts[objIndex], contact}
-                        // const updatedContacts = [
-                        // 	...app.contacts.slice(0,objIndex),
-                        // 	updatedObj,
-                        // 	...app.contacts.slice(objIndex+1),
-                        // ]
-                        Vue.set(app.contacts, app.index, contact)
+                        Vue.set(app.filteredContacts, app.index, contact)
                         app.resetForm();
                     })
                     .catch(function(response) {

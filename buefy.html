@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CRUD with Vue.js Buefy PHP MySQL Axios</title>
+	<link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        [v-cloak] { display: none; }
+        .table td.edit { cursor: pointer; }
+        .table td.edit:hover { text-decoration: underline; }
+
+    </style>
+</head>
+
+<body>
+
+<section class="hero is-medium is-dark is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <p class="title">
+        CRUD with Vue.js Axios PHP and Bulma
+      </p>
+      <p class="subtitle">
+        by <a href="http://webcarpehtner.com">Joseph Cowdell</a>
+      </p>
+    </div>
+  </div>
+</section>
+<section class="section">
+<div class="container">	
+    <div v-cloak id="vue_contacts">
+			<div class="modal" :class="{ 'is-active': isModalOpen }">
+				  <div class="modal-background" @click="closeModal()"></div>
+				  <div class="modal-card">
+						<header class="modal-card-head">
+                            <p class="modal-card-title">{{ modalTitle }}</p>
+                            <button class="delete" aria-label="close" @click="closeModal()"></button>
+                        </header>
+                        <section class="modal-card-body">
+                        <form v-on:submit.prevent>
+				            <div class="field">
+				                <label class="label">Name</label>
+				                <input class="input" type="text" name="name" v-model="formData.name" required>
+				            </div>
+				            <div class="field">
+				                <label class="label">Email</label>
+				                <input class="input" type="email" name="email" v-model="formData.email" required>
+				            </div>
+				            <div class="field">
+				                <label class="label">City</label>
+				                <input class="input" type="text" name="city" v-model="formData.city">
+				            </div>
+				            <div class="field">
+				                <label class="label">State</label>
+				                <input class="input" type="text" name="state" v-model="formData.state">
+				            </div>
+				            <div class="field">
+				                <label class="label">Zip</label>
+				                <input class="input" type="text" name="zip" v-model="formData.zip">
+				            </div>
+				            <div class="field">
+				                <label class="label">Phone</label>
+				                <input class="input" type="text" name="phone" v-model="formData.phone">
+				            </div>
+								</section>
+	            <footer class="modal-card-foot" style="justify-content: flex-end;">
+		                <button v-if="!isEditing" class="button is-primary" @click="createContact()">Add</button>
+		                <button v-if="isEditing" class="button is-primary" @click="changeContact()">Change</button>
+	            </footer>
+		        </form>
+
+				  </div>
+				  <button class="modal-close is-large" aria-label="close" @click="closeModal()"></button>
+				</div>
+
+
+	   <div>
+	   	<div class="field">
+			<label>Search</label>
+	   		<input class="input" type="text" v-model="search" placeholder="Enter your search"/>
+	   	</div>
+		<div class="field">
+		  <button class="button is-white" @click="openCreateModal()">Create Contact</button>
+		  <button class="button is-text is-pulled-right" @click="toggleDisabled()">{{ labelDisabled }}</button>
+		</div>
+        <table class="table is-striped is-hoverable">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th>Phone</th>
+                <th></th>
+            </tr>
+            <tr v-for="(contact, index) in filteredContacts" :key="contact.id">
+                <td class="edit" @click="editContact(contact, index)">{{ contact.name }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.email }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.city }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.state }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.zip }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.phone }}</td>
+                <td class="edit">
+                     <span class="delete is-small" @click="deleteContact(contact, index)"></span>
+                </td>
+            </tr>
+        </table>
+       </div>
+
+    </div>
+
+  </div>
+</section>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./js/buefy.js"></script>
+
+</body>
+
+</html>
