@@ -86,6 +86,7 @@
 	   	</div>
 		<div class="field">
 		  <button class="button is-white" @click="openCreateModal()">Create Contact</button>
+		  <button class="button is-text is-pulled-right" @click="toggleDisabled()">{{ labelDisabled }}</button>
 		</div>
         <table class="table is-striped is-hoverable">
             <tr>
@@ -134,28 +135,35 @@
 	            index: '',
 	          },
 	        search: '',
+	        showDisabled: 0,
+	        labelDisabled: 'Show Disabled',
             contacts: [],
             isEditing: false,
             isModalOpen: false,
             modalTitle: 'Create Contact'
         },
         mounted: function() {
-            console.log('Vue is all set!')
+            console.log('Vue loading. Getting contacts.')
             this.getContacts()
         },
         computed: {
 		  filteredContacts() {
 		    return this.contacts.filter(contact => {
-		      return contact.name.toLowerCase().includes(this.search.toLowerCase()) || 
-		      contact.email.toLowerCase().includes(this.search.toLowerCase()) ||
-		      contact.city.toLowerCase().includes(this.search.toLowerCase()) ||
-		      contact.state.toLowerCase().includes(this.search.toLowerCase()) ||
-		      contact.zip.toLowerCase().includes(this.search.toLowerCase()) || 
-		      contact.phone.toLowerCase().includes(this.search.toLowerCase())
+		      return contact.disabled === this.showDisabled &&
+		      (this.toLower(contact.name).includes(this.search.toLowerCase()) || 
+		      this.toLower(contact.email).includes(this.search.toLowerCase()) ||
+		      this.toLower(contact.city).includes(this.search.toLowerCase()) ||
+		      this.toLower(contact.state).includes(this.search.toLowerCase()) ||
+		      this.toLower(contact.zip).includes(this.search.toLowerCase()) || 
+		      this.toLower(contact.phone).includes(this.search.toLowerCase()))
 		    })
 		  }
 		},
         methods: {
+        	toLower: function(value) {
+        		const res = value === null ? '' : value.toLowerCase();
+        		return res;
+        	},
             getContacts: function() {
                 axios.get('api/contacts.php')
                     .then(function(response) {
@@ -168,6 +176,10 @@
             },
             openModal: function() {
             	this.isModalOpen = true;
+            },
+            toggleDisabled: function() {
+            	this.labelDisabled = (this.showDisabled === 1) ? 'Hide Disabled' : 'Show Disabled';
+            	this.showDisabled = (this.showDisabled === 1) ? 0 : 1;
             },
             openCreateModal: function() {
                 this.resetForm();

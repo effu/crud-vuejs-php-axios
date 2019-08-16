@@ -37,7 +37,7 @@ switch ($method) {
             $stmt->execute($sql_data);
             $result = $stmt->fetch();
         } else {
-            $sql = "select * from contacts where disabled != 1";
+            $sql = "select * from contacts";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($sql_data);
             $result = $stmt->fetch();
