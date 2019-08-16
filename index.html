@@ -79,6 +79,7 @@
                 </div>
 
 
+<<<<<<< HEAD
        <div>
         <h1 class="title">Contacts</h1>
         <div class="columns">
@@ -87,6 +88,16 @@
                     <label>Search</label>
                     <input class="input" type="text" v-model="search" placeholder="Enter your search"/>
                 </div>
+=======
+	   <div>
+        <h1 class="title">Contacts</h1>
+        <div class="columns">
+            <div class="column">
+               	<div class="field">
+        			<label>Search</label>
+        	   		<input class="input" type="text" v-model="search" placeholder="Enter your search"/>
+        	   	</div>
+>>>>>>> ab927782a4749b97cf931b48f0d7b1cb5f1f471a
             </div>
             <div class="column">
                 <div class="field">
@@ -205,7 +216,11 @@
                 this.isModalOpen = true;
             },
             toggleDisabled: function() {
+<<<<<<< HEAD
                 this.showDisabled = (this.showDisabled === 1) ? 0 : 1;
+=======
+            	this.showDisabled = (this.showDisabled === 1) ? 0 : 1;
+>>>>>>> ab927782a4749b97cf931b48f0d7b1cb5f1f471a
                 this.labelDisabled = (this.showDisabled === 1) ? 'Show Active' : 'Show Disabled';
 
             },
@@ -274,7 +289,11 @@
                     })
                     .then(function(response) {
                         console.log(response)
+<<<<<<< HEAD
                         Vue.delete(app.filteredContacts, index)
+=======
+				        Vue.delete(app.filteredContacts, index)
+>>>>>>> ab927782a4749b97cf931b48f0d7b1cb5f1f471a
                         app.resetForm();
                     })
                     .catch(function(response) {
