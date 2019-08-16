@@ -163,6 +163,14 @@
         },
         mounted: function() {
             console.log('Vue loading. Getting contacts.')
+            let self = this;
+            window.addEventListener('keyup', function(event) {
+            // If  ESC key was pressed...
+                if (event.keyCode === 27) {
+                    // try close your dialog
+                    self.isModalOpen = false;
+                }
+            });
             this.getContacts()
         },
         computed: {
