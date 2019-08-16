@@ -36,13 +36,11 @@ switch ($method) {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($sql_data);
             $result = $stmt->fetch();
-
         } else {
-            $sql = "select * from contacts";
+            $sql = "select * from contacts where disabled != 1";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($sql_data);
             $result = $stmt->fetch();
-
         }
 
         break;
@@ -51,7 +49,8 @@ switch ($method) {
         $action = isset($_POST['action']) ? $_POST['action'] : '';
         if ($action == 'delete' && $id > 0) {
             // delete record with id = $id
-            $sql = "delete from contacts where id = $id";
+            $sql = "update contacts set disabled = 1, date_updated = NOW() where id = :id";
+            $sql_data = ['id' => $id];
             $stmt = $pdo->prepare($sql);
             $stmt->execute($sql_data);
         } else {

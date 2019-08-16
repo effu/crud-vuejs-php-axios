@@ -1,17 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PHP | MySQL | Vue.js | Axios Example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
-    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/vue-material.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
         [v-cloak] { display: none; }
@@ -22,10 +18,21 @@
 </head>
 
 <body>
+
+<section class="hero is-medium is-dark is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <p class="title">
+        CRUD with Vue.js Axios PHP and Bulma
+      </p>
+      <p class="subtitle">
+        by <a href="http://webcarpehtner.com">Joseph Cowdell</a>
+      </p>
+    </div>
+  </div>
+</section>
 <section class="section">
-<div class="container-fluid">
-
-
+<div class="container">	
     <div v-cloak id="vue_contacts">
 			<div class="modal" :class="{ 'is-active': isModalOpen }">
 				  <div class="modal-background" @click="closeModal()"></div>
@@ -70,9 +77,16 @@
 				  </div>
 				  <button class="modal-close is-large" aria-label="close" @click="closeModal()"></button>
 				</div>
-	<my-app title="Contact Management">
-		   <div>
-		    <md-button class="md-primary pull-right" @click="openModal()">Create Contact</md-button>
+
+
+	   <div>
+	   	<div class="field">
+			<label>Search</label>
+	   		<input class="input" type="text" v-model="search" placeholder="Enter your search"/>
+	   	</div>
+		<div class="field">
+		  <button class="button is-white" @click="openCreateModal()">Create Contact</button>
+		</div>
         <table class="table is-striped is-hoverable">
             <tr>
                 <th>Name</th>
@@ -83,7 +97,7 @@
                 <th>Phone</th>
                 <th></th>
             </tr>
-            <tr v-for="(contact, index) in contacts" :key="contact.id">
+            <tr v-for="(contact, index) in filteredContacts" :key="contact.id">
                 <td class="edit" @click="editContact(contact, index)">{{ contact.name }}</td>
                 <td class="edit" @click="editContact(contact, index)">{{ contact.email }}</td>
                 <td class="edit" @click="editContact(contact, index)">{{ contact.city }}</td>
@@ -95,10 +109,7 @@
                 </td>
             </tr>
         </table>
-        </br>
-        <md-button class="md-primary" @click="openCreateModal()">Create Contact</md-button>
        </div>
-	</my-app>
 
     </div>
 
@@ -108,8 +119,6 @@
     <script src="./js/App.js"></script>
     <script>
 
-
-    Vue.use(VueMaterial.default)
 
     var app = new Vue({
         el: '#vue_contacts',
@@ -124,6 +133,7 @@
 	            id: 0,
 	            index: '',
 	          },
+	        search: '',
             contacts: [],
             isEditing: false,
             isModalOpen: false,
@@ -133,6 +143,18 @@
             console.log('Vue is all set!')
             this.getContacts()
         },
+        computed: {
+		  filteredContacts() {
+		    return this.contacts.filter(contact => {
+		      return contact.name.toLowerCase().includes(this.search.toLowerCase()) || 
+		      contact.email.toLowerCase().includes(this.search.toLowerCase()) ||
+		      contact.city.toLowerCase().includes(this.search.toLowerCase()) ||
+		      contact.state.toLowerCase().includes(this.search.toLowerCase()) ||
+		      contact.zip.toLowerCase().includes(this.search.toLowerCase()) || 
+		      contact.phone.toLowerCase().includes(this.search.toLowerCase())
+		    })
+		  }
+		},
         methods: {
             getContacts: function() {
                 axios.get('api/contacts.php')
