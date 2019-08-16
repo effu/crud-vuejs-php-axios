@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PHP | MySQL | Vue.js | Axios Example</title>
+    <title>Contacts CRUD with Vue.js, Axios, PHP, MySQL, and Bulma</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
@@ -23,7 +23,7 @@
   <div class="hero-body">
     <div class="container">
       <p class="title">
-        CRUD with Vue.js Axios PHP and Bulma
+        Contacts CRUD with Vue.js, Axios, PHP, MySQL, and Bulma
       </p>
       <p class="subtitle">
         by <a href="http://webcarpehtner.com">Joseph Cowdell</a>
@@ -80,14 +80,33 @@
 
 
 	   <div>
-	   	<div class="field">
-			<label>Search</label>
-	   		<input class="input" type="text" v-model="search" placeholder="Enter your search"/>
-	   	</div>
-		<div class="field">
-		  <button class="button is-white" @click="openCreateModal()">Create Contact</button>
-		  <button class="button is-text is-pulled-right" @click="toggleDisabled()">{{ labelDisabled }}</button>
-		</div>
+        <h1 class="title">Contacts</h1>
+        <div class="columns">
+            <div class="column">
+               	<div class="field">
+        			<label>Search</label>
+        	   		<input class="input" type="text" v-model="search" placeholder="Enter your search"/>
+        	   	</div>
+            </div>
+            <div class="column">
+                <div class="field">
+                  <br />
+                  <button class="button is-primary is-pulled-right" @click="openCreateModal()">Create Contact</button>
+<!--  // Alternate method of toggling
+<button class="button is-text is-pulled-right" @click="toggleDisabled()">{{ labelDisabled }}</button>
+ -->                
+                </div>
+            </div>
+
+        </div>
+
+            <div class="tabs">
+              <ul>
+                <li :class="{ 'is-active': !showDisabled }" @click="toggleDisabled()"><a>Active</a></li>
+                <li :class="{ 'is-active': showDisabled }" @click="toggleDisabled()"><a>Disabled</a></li>
+              </ul>
+            </div>
+
         <table class="table is-striped is-hoverable">
             <tr>
                 <th>Name</th>
@@ -178,8 +197,9 @@
             	this.isModalOpen = true;
             },
             toggleDisabled: function() {
-            	this.labelDisabled = (this.showDisabled === 1) ? 'Hide Disabled' : 'Show Disabled';
             	this.showDisabled = (this.showDisabled === 1) ? 0 : 1;
+                this.labelDisabled = (this.showDisabled === 1) ? 'Show Active' : 'Show Disabled';
+
             },
             openCreateModal: function() {
                 this.resetForm();
@@ -201,6 +221,7 @@
                 formData.append('city', this.formData.city || '')
                 formData.append('zip', this.formData.zip || '')
                 formData.append('phone', this.formData.phone || '')
+                formData.append('disabled', 0)
                 var contact = {};
                 formData.forEach(function(value, key) {
                     contact[key] = value;
@@ -214,13 +235,16 @@
                     .then(function(response) {
                         //handle success
                         console.log(response)
-                        app.contacts.push(contact)
-                        app.resetForm();
+                        app.filteredContacts.push(contact)
+                        app.resetForm()
+                        
                     })
                     .catch(function(response) {
                         //handle error
                         console.log(response)
-                    });
+                    })
+                    // this.getContacts()
+                    // this.$forceUpdate()
             },
             editContact: function(contact, index) {
 	            	this.formData = contact;
@@ -242,7 +266,7 @@
                     })
                     .then(function(response) {
                         console.log(response)
-				            		Vue.delete(app.contacts, index)
+				        Vue.delete(app.filteredContacts, index)
                         app.resetForm();
                     })
                     .catch(function(response) {
@@ -278,16 +302,7 @@
                     .then(function(response) {
                         //handle success
                         console.log(response)
-                        // /* find the index of object from array that needs to be updated */
-                        // const objIndex = app.contacts.findIndex(obj => obj.id === contact.id)
-                        // /* make a new object with the updated object */
-                        // const updatedObj = {...app.contacts[objIndex], contact}
-                        // const updatedContacts = [
-                        // 	...app.contacts.slice(0,objIndex),
-                        // 	updatedObj,
-                        // 	...app.contacts.slice(objIndex+1),
-                        // ]
-                        Vue.set(app.contacts, app.index, contact)
+                        Vue.set(app.filteredContacts, app.index, contact)
                         app.resetForm();
                     })
                     .catch(function(response) {
