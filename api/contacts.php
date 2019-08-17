@@ -60,17 +60,37 @@ switch ($method) {
             $state = isset($_POST['state']) ? $_POST['state'] : '';
             $zip = isset($_POST['zip']) ? $_POST['zip'] : '';
             $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
+            $rating = isset($_POST['rating']) ? intval($_POST['rating']) : 0;
 
             if ($id > 0) {
                 // change existing record
-                $sql = "update contacts set name = '$name', email = '$email', city='$city', state='$state', zip='$zip', phone='$phone', date_updated = NOW() where id = $id";
+                $sql = "update contacts set name = :name, email = :email, city=:city, state=:state, zip=:zip, phone=:phone, rating=:rating, date_updated = NOW() where id = :id";
+                $sql_data = [
+                    'name' => $name,
+                    'email' => $email,
+                    'city' => $city,
+                    'state' => $state,
+                    'zip' => $zip,
+                    'phone' => $phone,
+                    'rating' => $rating,
+                    'id' => $id,
+                ];
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($sql_data);
                 // $result = $stmt->fetch();
 
             } else {
                 // add new record
-                $sql = "insert into contacts (name, email, city, state, zip, phone, date_created) values ('$name', '$email', '$city', '$state', '$zip', '$phone', NOW())";
+                $sql = "insert into contacts (name, email, city, state, zip, phone, rating, date_created) values (:name, :email, :city, :state, :zip, :phone, :rating, NOW())";
+                $sql_data = [
+                    'name' => $name,
+                    'email' => $email,
+                    'city' => $city,
+                    'state' => $state,
+                    'zip' => $zip,
+                    'phone' => $phone,
+                    'rating' => $rating,
+                ];
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($sql_data);
                 // $result = $stmt->fetch();
@@ -80,29 +100,8 @@ switch ($method) {
         break;
 }
 
-// run SQL statement
-// $stmt = $pdo->prepare($sql)->execute($sql_data);
-// $result = $stmt->fetch();
-// $pdo = $stmt->fetchAll();
-// var_dump('<pre>', $result, '</pre>');
-// die if SQL statement failed
-// if (!$stmt || !$result) {
-//     http_response_code(404);
-//     die('Nothing found.');
-// }
-
 if ($method == 'GET') {
-    if (!$id) {
-        // echo '[';
-    }
-
     echo json_encode($stmt->fetchAll());
-    // for ($i = 0; $i < count($result); $i++) {
-    // echo ($i > 0 ? ',' : '') . json_encode($stmt->fetchAll());
-    // }
-    if (!$id) {
-        // echo ']';
-    }
 } elseif ($method == 'POST') {
     echo json_encode($stmt->rowCount());
 } else {

@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Contacts CRUD with Vue.js, Axios, PHP, MySQL, and Bulma</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
     <style>
         [v-cloak] { display: none; }
@@ -67,7 +64,15 @@
                                 <label class="label">Phone</label>
                                 <input class="input" type="text" name="phone" v-model="formData.phone">
                             </div>
-                                </section>
+                            <div class="field">
+                                <label class="label">Rating</label>
+                                <div class="select">
+                                  <select class="select" v-model="formData.rating">
+                                    <option v-for="num in nums" :value="num">{{ num }}</option>
+                                  </select>
+                                </div>
+                            </div>
+                        </section>
                 <footer class="modal-card-foot" style="justify-content: flex-end;">
                         <button v-if="!isEditing" class="button is-primary" @click="createContact()">Add</button>
                         <button v-if="isEditing" class="button is-primary" @click="changeContact()">Change</button>
@@ -115,6 +120,7 @@
                 <th>State</th>
                 <th>Zip</th>
                 <th>Phone</th>
+                <th>Rating</th>
                 <th></th>
             </tr>
             <tr v-for="(contact, index) in filteredContacts" :key="contact.id">
@@ -124,6 +130,7 @@
                 <td class="edit" @click="editContact(contact, index)">{{ contact.state }}</td>
                 <td class="edit" @click="editContact(contact, index)">{{ contact.zip }}</td>
                 <td class="edit" @click="editContact(contact, index)">{{ contact.phone }}</td>
+                <td class="edit" @click="editContact(contact, index)">{{ contact.rating }}</td>
                 <td class="edit">
                      <span class="delete is-small" @click="deleteContact(contact, index)"></span>
                 </td>
@@ -135,199 +142,10 @@
 
   </div>
 </section>
-    <script src="https://unpkg.com/vue-material@beta"></script>
-    <script src="./js/App.js"></script>
-    <script>
 
-
-    var app = new Vue({
-        el: '#vue_contacts',
-        data: {
-            formData: {
-                name: '',
-                email: '',
-                city: '',
-                state: '',
-                zip: '',
-                phone: '',
-                id: 0,
-                index: '',
-              },
-            search: '',
-            showDisabled: 0,
-            labelDisabled: 'Show Disabled',
-            contacts: [],
-            isEditing: false,
-            isModalOpen: false,
-            modalTitle: 'Create Contact'
-        },
-        mounted: function() {
-            console.log('Vue loading. Getting contacts.')
-            let self = this;
-            window.addEventListener('keyup', function(event) {
-            // If  ESC key was pressed...
-                if (event.keyCode === 27) {
-                    // try close your dialog
-                    self.isModalOpen = false;
-                }
-            });
-            this.getContacts()
-        },
-        computed: {
-          filteredContacts() {
-            return this.contacts.filter(contact => {
-              return contact.disabled === this.showDisabled &&
-              (this.toLower(contact.name).includes(this.search.toLowerCase()) || 
-              this.toLower(contact.email).includes(this.search.toLowerCase()) ||
-              this.toLower(contact.city).includes(this.search.toLowerCase()) ||
-              this.toLower(contact.state).includes(this.search.toLowerCase()) ||
-              this.toLower(contact.zip).includes(this.search.toLowerCase()) || 
-              this.toLower(contact.phone).includes(this.search.toLowerCase()))
-            })
-          }
-        },
-        methods: {
-            toLower: function(value) {
-                const res = value === null ? '' : value.toLowerCase();
-                return res;
-            },
-            getContacts: function() {
-                axios.get('api/contacts.php')
-                    .then(function(response) {
-                        console.log(response.data);
-                        app.contacts = response.data;
-                    })
-                    .catch(function(error) {
-                        console.log(error);
-                    });
-            },
-            openModal: function() {
-                this.isModalOpen = true;
-            },
-            toggleDisabled: function() {
-                this.showDisabled = (this.showDisabled === 1) ? 0 : 1;
-                this.labelDisabled = (this.showDisabled === 1) ? 'Show Active' : 'Show Disabled';
-
-            },
-            openCreateModal: function() {
-                this.resetForm();
-                this.openModal();
-
-            },
-            closeModal: function() {
-                this.isModalOpen = false;
-            },
-            createContact: function() {
-                console.log("Create contact!")
-                console.log(this.formData);
-                this.openModal();
-                let formData = new FormData();
-                console.log("name:", this.formData.name, "email:", this.formData.email)
-                formData.append('name', this.formData.name || '')
-                formData.append('email', this.formData.email || '')
-                formData.append('state', this.formData.state || '')
-                formData.append('city', this.formData.city || '')
-                formData.append('zip', this.formData.zip || '')
-                formData.append('phone', this.formData.phone || '')
-                formData.append('disabled', 0)
-                var contact = {};
-                formData.forEach(function(value, key) {
-                    contact[key] = value;
-                });
-                axios({
-                        method: 'post',
-                        url: 'api/contacts.php',
-                        data: formData,
-                        config: { headers: { 'Content-Type': 'multipart/form-data' } }
-                    })
-                    .then(function(response) {
-                        //handle success
-                        console.log(response)
-                        app.filteredContacts.push(contact)
-                        app.resetForm()
-                        
-                    })
-                    .catch(function(response) {
-                        //handle error
-                        console.log(response)
-                    })
-                    // this.getContacts()
-                    // this.$forceUpdate()
-            },
-            editContact: function(contact, index) {
-                    this.formData = contact;
-                    this.isEditing = true;
-                    this.modalTitle = 'Edit Contact';
-                    this.openModal();
-            },
-            deleteContact: function(contact, index) {
-                    if (confirm("Are you sure you want to delete, " + contact.name + "?")){
-                        console.log("Deleting: " + contact.id + " Index: " + index);
-                      let formData = new FormData();
-                      formData.append('id', contact.id)
-                      formData.append('action', 'delete')
-                      axios({
-                        method: 'post',
-                        url: 'api/contacts.php',
-                        data: formData,
-                        config: { headers: { 'Content-Type': 'multipart/form-data' } }
-                    })
-                    .then(function(response) {
-                        console.log(response)
-                        Vue.delete(app.filteredContacts, index)
-                        app.resetForm();
-                    })
-                    .catch(function(response) {
-                        //handle error
-                        console.log(response)
-                    });
-                    }
-            },
-            changeContact: function() {
-                console.log("Change contact!")
-
-                let formData = new FormData();
-                console.log("name:", this.formData.name, "id:", this.formData.id, " key:", this.formData.index)
-                formData.append('id', this.formData.id)
-                formData.append('name', this.formData.name)
-                formData.append('email', this.formData.email)
-                formData.append('state', this.formData.state)
-                formData.append('city', this.formData.city)
-                formData.append('zip', this.formData.zip)
-                formData.append('phone', this.formData.phone)
-
-                var contact = {};
-                formData.forEach(function(value, key) {
-                    contact[key] = value;
-                });
-
-                axios({
-                        method: 'post',
-                        url: 'api/contacts.php',
-                        data: formData,
-                        config: { headers: { 'Content-Type': 'multipart/form-data' } }
-                    })
-                    .then(function(response) {
-                        //handle success
-                        console.log(response)
-                        Vue.set(app.filteredContacts, app.index, contact)
-                        app.resetForm();
-                    })
-                    .catch(function(response) {
-                        //handle error
-                        console.log(response)
-                    });
-            },
-            resetForm: function() {
-                this.formData = {};
-                this.isEditing = false;
-                this.closeModal();
-
-            }
-        }
-    })
-    </script>
-
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="./js/crud.js"></script>
 </body>
-
 </html>
