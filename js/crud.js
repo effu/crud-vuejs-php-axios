@@ -140,7 +140,8 @@
                     })
                     .then(function(response) {
                         console.log(response)
-                        Vue.delete(app.filteredContacts, index)
+                        // Vue.delete(app.filteredContacts, index)
+                        contact.disabled = 1;
                         app.resetForm();
                     })
                     .catch(function(response) {
