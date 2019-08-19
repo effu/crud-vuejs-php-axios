@@ -114,14 +114,14 @@
 
         <table class="table is-striped is-hoverable">
             <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Zip</th>
-                <th>Phone</th>
-                <th>Rating</th>
-                <th></th>
+                <th @click="setOrderBy('name')">Name</th>
+                <th @click="setOrderBy('email')">Email</th>
+                <th @click="setOrderBy('city')">City</th>
+                <th @click="setOrderBy('state')">State</th>
+                <th @click="setOrderBy('zip')">Zip</th>
+                <th @click="setOrderBy('phone')">Phone</th>
+                <th @click="setOrderBy('rating')">Rating</th>
+                <th>&nbsp;</th>
             </tr>
             <tr v-for="(contact, index) in filteredContacts" :key="contact.id">
                 <td class="edit" @click="editContact(contact, index)">{{ contact.name }}</td>
