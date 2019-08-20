@@ -96,7 +96,7 @@
             <div class="column">
                 <div class="field">
                   <br />
-                  <button class="button is-primary is-pulled-right" @click="openCreateModal()">Create Contact</button>
+                  <button class="button is-primary" @click="openCreateModal()"><i class="fas fa-plus"></i></button>
 <!--  // Alternate method of toggling
 <button class="button is-text is-pulled-right" @click="toggleDisabled()">{{ labelDisabled }}</button>
  -->                
@@ -148,7 +148,7 @@
                     <td>{{ contact.city }}</td>
                     <td>{{ contact.state }}</td>
                     <td>{{ contact.zip }}</td>
-                    <td>{{ contact.phone }}</td>
+                    <td><span>{{ contact.phone }}</span>&nbsp; <a onclick="copyPreviousSibling(this)" class="is-pulled-right"><i class="far fa-copy"></i></a></td>
                     <td>{{ contact.rating }}</td>
                     <td class="edit">
                          <span class="delete is-small" @click="deleteContact(contact, index)"></span>
