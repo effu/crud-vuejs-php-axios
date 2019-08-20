@@ -36,7 +36,7 @@ copyById = function(id) {
   let text = document.getElementById(id)
   copyText(text.value)  
 }
-
+// <button onclick="copyPreviousSibling(this)">copy</button>
 copyPreviousSibling = function(curr) {
   let el = curr.previousElementSibling
   if (el.value !== undefined) {
@@ -103,12 +103,13 @@ copyPreviousSibling = function(curr) {
             filteredContacts() {
                 return this.sortContacts(this.orderBy).filter(contact => {
                     return contact.disabled === this.showDisabled &&
-                        (this.toLower(contact.name).includes(this.search.toLowerCase()) ||
+                        (   this.toLower(contact.name).includes(this.search.toLowerCase()) ||
                             this.toLower(contact.email).includes(this.search.toLowerCase()) ||
                             this.toLower(contact.city).includes(this.search.toLowerCase()) ||
                             this.toLower(contact.state).includes(this.search.toLowerCase()) ||
                             this.toLower(contact.zip).includes(this.search.toLowerCase()) ||
-                            this.toLower(contact.phone).includes(this.search.toLowerCase()))
+                            this.toLower(contact.phone).includes(this.search.toLowerCase())
+                            )
                 })
             }
         },
