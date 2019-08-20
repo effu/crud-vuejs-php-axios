@@ -17,6 +17,17 @@
                 index: '',
                 rating: 0,
             },
+            fields: [
+                { name: ' ', clss: ' ', type: 'none'},
+                { name: 'name', clss: 'fas fa-sort', type: 'string'},
+                { name: 'email', clss: 'fas fa-sort', type: 'string'},
+                { name: 'city', clss: 'fas fa-sort', type: 'string'},
+                { name: 'state', clss: 'fas fa-sort', type: 'string'},
+                { name: 'zip', clss: 'fas fa-sort', type: 'number'},
+                { name: 'phone', clss: 'fas fa-sort', type: 'string'},
+                { name: 'rating', clss: 'fas fa-sort', type: 'number'},
+                { name: ' ', clss: ' ', type: 'none'},
+            ],
             nums: nums,
             asc: 'desc',
             search: '',
@@ -56,18 +67,38 @@
         methods: {
             sortContacts: function(field) {
                 let sorted = this.contacts.slice().sort(function(a, b) {
-                        return (a[field].toLowerCase() > b[field].toLowerCase()) ? 1 : -1
+                        return (a[field] !== null ? a[field].toString().toLowerCase() : '' > b[field] !== null ? b[field].toString().toLowerCase() : '') ? 1 : -1
                  })
+                 
                  if (this.asc === 'desc') {
                     return sorted.reverse()
                  } else {
                      return sorted
                  }
             },
+            getHeaderClass: function(field) {
+                if (this.orderBy === field) {
+                    let headerClass = (this.asc === 'asc') ? 'fas fa-angle-down' : 'fas fa-angle-up'
+                    // console.log(field, headerClass)
+                    this.fields.map((item, index) => {
+                        if (field === item.name) {
+                            item.clss = headerClass
+                        } else {
+                            item.clss = ''
+                        }
+                    })
+                }
+                return ''
+            },
             setOrderBy: function(field) {
                 this.asc = (this.asc === 'asc') ? 'desc' : 'asc'
-                console.log(this.asc)
+                // console.log(this.asc)
                 this.orderBy = field
+                // this.fields.map((item, index) => {
+                //     item.clss = this.getHeaderClass(field)
+                // })
+
+                
             },
             toLower: function(value) {
                 const res = value === null ? '' : value.toLowerCase();

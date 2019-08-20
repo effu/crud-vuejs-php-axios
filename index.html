@@ -113,28 +113,48 @@
             </div>
 
         <table class="table is-striped is-hoverable">
-            <tr>
-                <th @click="setOrderBy('name')">Name</th>
-                <th @click="setOrderBy('email')">Email</th>
-                <th @click="setOrderBy('city')">City</th>
-                <th @click="setOrderBy('state')">State</th>
-                <th @click="setOrderBy('zip')">Zip</th>
-                <th @click="setOrderBy('phone')">Phone</th>
-                <th @click="setOrderBy('rating')">Rating</th>
+            <thead>
+                <tr>
+                    <th v-for="(header, index) in fields" :key="header.name">
+                        <a @click="[setOrderBy(header.name), getHeaderClass(header.name)]">
+                        {{ header.name }} 
+                        &nbsp; <i :class="header.clss"></i>
+                        </a>
+                    </th>
+<!--                 <th @click="setOrderBy('name')">
+                    Name &nbsp;<i :class="{fields.name.clss}" aria-hidden="true"></i></th>
+                <th @click="setOrderBy('email')">
+                    Email&nbsp;<i :class="getHeaderClass('email')" aria-hidden="true"></th>
+                <th @click="setOrderBy('city')">
+                    City&nbsp;<i :class="getHeaderClass('city')" aria-hidden="true"></th>
+                <th @click="setOrderBy('state')">
+                    State&nbsp;<i :class="getHeaderClass('state')" aria-hidden="true"></th>
+                <th @click="setOrderBy('zip')">
+                    Zip&nbsp;<i :class="getHeaderClass('zip')" aria-hidden="true"></th>
+                <th @click="setOrderBy('phone')">
+                    Phone&nbsp;<i :class="getHeaderClass('phone')" aria-hidden="true"></th>
+                <th @click="setOrderBy('rating')">
+                    Rating&nbsp;<i :class="getHeaderClass('rating')" aria-hidden="true"></th>
                 <th>&nbsp;</th>
-            </tr>
-            <tr v-for="(contact, index) in filteredContacts" :key="contact.id">
-                <td class="edit" @click="editContact(contact, index)">{{ contact.name }}</td>
-                <td class="edit" @click="editContact(contact, index)">{{ contact.email }}</td>
-                <td class="edit" @click="editContact(contact, index)">{{ contact.city }}</td>
-                <td class="edit" @click="editContact(contact, index)">{{ contact.state }}</td>
-                <td class="edit" @click="editContact(contact, index)">{{ contact.zip }}</td>
-                <td class="edit" @click="editContact(contact, index)">{{ contact.phone }}</td>
-                <td class="edit" @click="editContact(contact, index)">{{ contact.rating }}</td>
-                <td class="edit">
-                     <span class="delete is-small" @click="deleteContact(contact, index)"></span>
-                </td>
-            </tr>
+
+ -->            
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(contact, index) in filteredContacts" :key="contact.id">
+                    <td class="edit" @click="editContact(contact, index)"><i class="fas fa-edit"></i></td>
+                    <td>{{ contact.name }}</td>
+                    <td>{{ contact.email }}</td>
+                    <td>{{ contact.city }}</td>
+                    <td>{{ contact.state }}</td>
+                    <td>{{ contact.zip }}</td>
+                    <td>{{ contact.phone }}</td>
+                    <td>{{ contact.rating }}</td>
+                    <td class="edit">
+                         <span class="delete is-small" @click="deleteContact(contact, index)"></span>
+                    </td>
+                </tr>
+            </tbody>
         </table>
        </div>
 
